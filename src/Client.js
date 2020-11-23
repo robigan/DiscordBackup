@@ -5,6 +5,7 @@ module.exports = class Backer extends Client {
     constructor(...options) {
         super(...options);
         this.UI = new (require("./UI.js"))(this);
+        this.Intents = ["Channels", "Roles"];
 
         this.once("ready", async () => {
             await this.UI.handleReady();
