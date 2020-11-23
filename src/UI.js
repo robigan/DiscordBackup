@@ -68,12 +68,13 @@ ${Bold("Members")} ${Grey("›")} ${members.size}`);
             name: "value",
             message: "Which intents should be saved?",
             choices: [
+                { title: "General Information", value: "General", selected: this.client.Intents.find(element => element === "General"), disabled: true },
                 { title: "Channels", value: "Channels", selected: this.client.Intents.find(element => element === "Channels")},
                 { title: "Roles", value: "Roles", selected: this.client.Intents.find(element => element === "Roles")},
                 { title: "Emojis", value: "Emojis", selected: this.client.Intents.find(element => element === "Emojis") },
                 { title: "Members", value: "Members", selected: this.client.Intents.find(element => element === "Members"), disabled: true }
             ],
-            warn: "This option is either disabled or not available at the moment"
+            warn: "This option is either disabled for toggling or not available at the moment"
         });
         this.mainMenu();
         return Intents.value;
