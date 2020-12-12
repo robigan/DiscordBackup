@@ -4,11 +4,11 @@
   "description": "A simple tool for backing up discord servers. An alternative to Xenon Bot and serverless.",
   "main": "index.js",
   "dependencies": {
-    "discord.js": "^12.4.1",
+    "discord.js": "^12.5.1",
     "prompts": "^2.4.0"
   },
   "devDependencies": {
-    "eslint": "^7.14.0"
+    "eslint": "^7.15.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
