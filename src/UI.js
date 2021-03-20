@@ -1,5 +1,5 @@
 const Prompts = require("prompts");
-const { bold: Bold, green: Green, grey: Grey } = require("kleur");
+const { bold: Bold, green: Green, grey: Grey, red: Red } = require("kleur");
 
 module.exports = class UI {
     constructor(client) {
@@ -7,8 +7,8 @@ module.exports = class UI {
     }
 
     async handleReady() {
-        console.log(Bold(`${Green("✔")} Logged in as ${this.client.user.username}`));
-        this.guilds = this.client.guilds;
+        console.log(Bold(`${Green("✔")} Logged in as ${Red(await this.client.Rest.user.getSelf().then(d => {return d.username;}))}`));
+        //this.guilds = this.client.Rest.;
     }
 
     async mainMenu() {

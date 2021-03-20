@@ -1,4 +1,4 @@
 **/node_modules
 Snapshots/**
 .DS_Store
-Configs/Secrets.json
+Configs/Sectrets.json

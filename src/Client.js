@@ -1,16 +1,19 @@
-const { Client } = require("discord.js");
+const SnowTransfer = require("snowtransfer");
+
 const FileSystem = require("fs/promises");
 
-module.exports = class Backer extends Client {
-    constructor(...options) {
-        super(...options);
+module.exports = class Backer {
+    constructor(Token) {
+        const Rest = new SnowTransfer(Token);
+        this.Rest = Rest;
+
         this.UI = new (require("./UI.js"))(this);
         this.Intents = ["General", "Channels", "Roles"];
 
-        this.once("ready", async () => {
+        (async () => {
             await this.UI.handleReady();
-            this.UI.mainMenu();
-        });
+            //this.UI.mainMenu();
+        })().catch(console.error);
     }
 
     async createSnapshot(guildID) {
@@ -38,9 +41,5 @@ module.exports = class Backer extends Client {
             owner: guild.owner.user.username,
             ownerID: guild.ownerID
         };
-    }
-
-    async start(token) {
-        await this.login(token);
     }
 };
