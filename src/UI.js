@@ -7,8 +7,12 @@ module.exports = class UI {
     }
 
     async handleReady() {
-        console.log(Bold(`${Green("✔")} Logged in as ${Red(await this.client.Rest.user.getSelf().then(d => {return d.username;}))}`));
-        //this.guilds = this.client.Rest.;
+        console.log(Bold(`${Green("✔")} Logged in as ${Red(await this.client.Rest.user.getSelf().then(d => { return d.username; }))}`));
+        this.guilds = [];
+        for (const guildID of (await this.client.Rest.user.getGuilds()).map(guild => guild.id)) {
+            this.guilds.push(await this.client.Rest.guild.getGuild(guildID));
+        }
+        this.guilds = Object.assign({}, ...this.guilds.map((x) => ({[x.id]: x})));
     }
 
     async mainMenu() {
@@ -31,7 +35,7 @@ module.exports = class UI {
     }
 
     async getServerInfo(guildID) {
-        const guild = this.guilds.cache.get(guildID);
+        const guild = this.guilds[guildID];
         const channels = guild.channels.cache;
         const roles = guild.roles.cache;
         const emojis = guild.emojis.cache;
@@ -44,9 +48,9 @@ ${Bold("Members")} ${Grey("›")} ${members.size}`);
         this.mainMenu();
     }
 
-    async pickGuilds(guildManager) {
+    async pickGuilds() {
         const guilds = [];
-        guildManager.cache.map(guild => {
+        this.guilds.forEach(guild => {
             if (guild.available) guilds.push({ title: guild.name, value: guild.id });
             else guilds.push({ title: guild.name, value: guild.id, disabled: true });
         });

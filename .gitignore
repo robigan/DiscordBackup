@@ -2,3 +2,4 @@
 Snapshots/**
 .DS_Store
 Configs/Sectrets.json
+.vscode
