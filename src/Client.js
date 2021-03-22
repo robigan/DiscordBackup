@@ -10,14 +10,19 @@ module.exports = class Backer {
         this.UI = new (require("./UI.js"))(this);
         this.Intents = ["General", "Channels", "Roles"];
 
+        this.guilds = new Map();
+
         (async () => {
+            for (const guildID of (await this.Rest.user.getGuilds()).map(guild => guild.id)) {
+                this.guilds.set(guildID, await this.escalateGuild(guildID));
+            }
             await this.UI.handleReady();
-            //this.UI.mainMenu();
+            this.UI.mainMenu();
         })().catch(console.error);
     }
 
     async createSnapshot(guildID) {
-        const guild = this.guilds.cache.get(guildID);
+        const guild = this.guilds.get(guildID);
         const data = {};
         this.Intents.find(element => element === "General") ? data.general = await this.createGuildGeneral(guildID) : {};
         this.Intents.find(element => element === "Channels") ? data.channels = guild.channels.cache : {};
@@ -41,5 +46,11 @@ module.exports = class Backer {
             owner: guild.owner.user.username,
             ownerID: guild.ownerID
         };
+    }
+
+    async escalateGuild(guildID) {
+        return Object.assign(await this.Rest.guild.getGuild(guildID), 
+            {channels: await this.Rest.guild.getGuildChannels(guildID)},
+        );
     }
 };

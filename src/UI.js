@@ -8,11 +8,6 @@ module.exports = class UI {
 
     async handleReady() {
         console.log(Bold(`${Green("✔")} Logged in as ${Red(await this.client.Rest.user.getSelf().then(d => { return d.username; }))}`));
-        this.guilds = [];
-        for (const guildID of (await this.client.Rest.user.getGuilds()).map(guild => guild.id)) {
-            this.guilds.push(await this.client.Rest.guild.getGuild(guildID));
-        }
-        this.guilds = Object.assign({}, ...this.guilds.map((x) => ({[x.id]: x})));
     }
 
     async mainMenu() {
@@ -28,30 +23,28 @@ module.exports = class UI {
             ],
             initial: 1
         });
-        if (Action.value === "Backup") this.client.createSnapshot(await this.pickGuilds(this.guilds));
-        else if (Action.value === "ServerInfos") this.getServerInfo(await this.pickGuilds(this.guilds));
+        if (Action.value === "Backup") this.client.createSnapshot(await this.pickGuilds(this.client.guilds));
+        else if (Action.value === "ServerInfos") this.getServerInfo(await this.pickGuilds(this.client.guilds));
         else if (Action.value === "Configure") this.client.Intents = await this.chooseData();
         else if (Action.value === "Exit") process.exit();
     }
 
     async getServerInfo(guildID) {
-        const guild = this.guilds[guildID];
-        const channels = guild.channels.cache;
-        const roles = guild.roles.cache;
-        const emojis = guild.emojis.cache;
-        const members = guild.members.cache;
-        console.log(`${Bold("Name")} ${Grey("›")} ${guild.name} (${guild.nameAcronym})
-${Bold("Channels")} ${Grey("›")} ${channels.size}
-${Bold("Roles")} ${Grey("›")} ${roles.size}
-${Bold("Emojis")} ${Grey("›")} ${emojis.size}
-${Bold("Members")} ${Grey("›")} ${members.size}`);
+        const guild = this.client.guilds.get(guildID);
+        const channels = guild.channels;
+        const roles = guild.roles;
+        const emojis = guild.emojis;
+        console.log(`${Bold("Name")} ${Grey("›")} ${guild.name}
+${Bold("Channels")} ${Grey("›")} ${channels.length}
+${Bold("Roles")} ${Grey("›")} ${roles.length}
+${Bold("Emojis")} ${Grey("›")} ${emojis.length}`);
         this.mainMenu();
     }
 
     async pickGuilds() {
         const guilds = [];
-        this.guilds.forEach(guild => {
-            if (guild.available) guilds.push({ title: guild.name, value: guild.id });
+        this.client.guilds.forEach(guild => {
+            if (!guild.unavailable) guilds.push({ title: guild.name, value: guild.id });
             else guilds.push({ title: guild.name, value: guild.id, disabled: true });
         });
         const Response = await Prompts({
