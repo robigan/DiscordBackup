@@ -6,6 +6,7 @@ module.exports = class Snapshoter {
     }
 
     async createSnapshot(guildID) {
+        this.client.guilds.set(guildID, await this.client.escalateGuild(guildID));
         const guild = this.client.guilds.get(guildID);
         const data = {};
         this.client.Intents.get("General") ? data.general = await this.createGuildGeneral(guild) : {};

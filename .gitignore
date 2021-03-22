@@ -1,5 +1,5 @@
 **/node_modules
-Snapshots/**
+Snapshots/*.json
 .DS_Store
 Configs/Sectrets.json
 .vscode

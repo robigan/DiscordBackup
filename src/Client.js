@@ -24,7 +24,7 @@ module.exports = class Backer {
     async escalateGuild(guildID) {
         return Object.assign(await this.Rest.guild.getGuild(guildID),
             this.Intents.get("Channels") ? {channels: await this.Rest.guild.getGuildChannels(guildID)} : {},
-            this.Intents.get("Members") ? {members: await this.Rest.guild.getGuildMembers(guildID)} : {}
+            this.Intents.get("Members") ? {members: await this.Rest.guild.getGuildMembers(guildID, {limit: 1000})} : {}
         );
     }
 };

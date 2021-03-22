@@ -18,7 +18,7 @@ module.exports = class UI {
             choices: [
                 { title: "See available servers", description: "Let's you see servers and the possible data to snapshot", value: "ServerInfos" },
                 { title: "Pick a server to snapshot", description: "Starts the snapshotting process", value: "Backup" },
-                { title: "Configure snapshot options", description: "Configures which intents to snapshot (Options doesn't save!)", value: "Configure" },
+                { title: "Configure intent options", description: "Configures which intents to snapshot (Options doesn't save!)", value: "Configure" },
                 { title: "Exit program", value: "Exit" }
             ],
             initial: 1
@@ -30,19 +30,17 @@ module.exports = class UI {
     }
 
     async getServerInfo(guildID) {
-        //console.log("Before: ", this.client.guilds.get(guildID));
         this.client.guilds.set(guildID, await this.client.escalateGuild(guildID));
-        //console.log("After: ", this.client.guilds.get(guildID));
         const guild = this.client.guilds.get(guildID);
         const channels = guild.channels ?? "Channel list not downloaded";
         const roles = guild.roles;
         const emojis = guild.emojis;
         const members = guild.members ?? "Member list not downloaded";
         console.log(`${Bold("Name")} ${Grey("›")} ${guild.name}
-${Bold("Channels")} ${Grey("›")} ${channels.length}
+${Bold("Channels")} ${Grey("›")} ${Array.isArray(channels) ? channels.length : channels}
 ${Bold("Roles")} ${Grey("›")} ${roles.length}
 ${Bold("Emojis")} ${Grey("›")} ${emojis.length}
-${Bold("Members")} ${Grey("›")} ${members.length ?? members}`);
+${Bold("Members")} ${Grey("›")} ${Array.isArray(members) ? members.length : members}`);
         this.mainMenu();
     }
 
