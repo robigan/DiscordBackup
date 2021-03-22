@@ -8,21 +8,20 @@ module.exports = class Snapshoter {
     async createSnapshot(guildID) {
         const guild = this.client.guilds.get(guildID);
         const data = {};
-        this.Intents.find(element => element === "General") ? data.general = await this.createGuildGeneral(guildID) : {};
-        this.Intents.find(element => element === "Channels") ? data.channels = guild.channels.cache : {};
-        this.Intents.find(element => element === "Roles") ? data.roles = guild.roles.cache : {};
-        this.Intents.find(element => element === "Emojis") ? data.emojis = guild.emojis.cache : {};
-        this.Intents.find(element => element === "Members") ? data.members = guild.members.cache : {};
+        this.client.Intents.get("General") ? data.general = await this.createGuildGeneral(guild) : {};
+        this.client.Intents.get("Channels") ? data.channels = guild.channels : {};
+        this.client.Intents.get("Roles") ? data.roles = guild.roles : {};
+        this.client.Intents.get("Emojis") ? data.emojis = guild.emojis : {};
+        this.client.Intents.get("Members") ? data.members = guild.members : {};
         const today = new Date();
 
         await FileSystem.appendFile(`${process.cwd()}/Snapshots/${guild.name}-${today.getTime()}.json`, JSON.stringify(data), { flag: "ax" }).then(() => console.log("Snapshot successfully created")).catch((err) => console.error(err));
 
-        this.UI.mainMenu();
+        this.client.UI.mainMenu();
     }
     // ${guildID}/${today.getUTCFullYear()}/${today.getUTCMonth()}/${today.getUTCDate()}/
 
-    async createGuildGeneral(guildID) {
-        const guild = this.client.guilds.get(guildID);
+    async createGuildGeneral(guild) {
         return {
             name: guild.name,
             id: guild.id,

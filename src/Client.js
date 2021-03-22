@@ -8,7 +8,7 @@ module.exports = class Backer {
         this.UI = new (require("./UI.js"))(this);
         this.Snapshot = new (require("./Snapshot.js"))(this);
         this.Restore = new (require("./Restorer.js"))(this);
-        this.Intents = ["General", "Channels", "Roles"];
+        this.Intents = new Map([["General", true], ["Channels", true], ["Roles", true], ["Emojis", false], ["Members", false]]);
 
         this.guilds = new Map();
 
@@ -23,7 +23,8 @@ module.exports = class Backer {
 
     async escalateGuild(guildID) {
         return Object.assign(await this.Rest.guild.getGuild(guildID),
-            {channels: await this.Rest.guild.getGuildChannels(guildID)},
+            this.Intents.get("Channels") ? {channels: await this.Rest.guild.getGuildChannels(guildID)} : {},
+            this.Intents.get("Members") ? {members: await this.Rest.guild.getGuildMembers(guildID)} : {}
         );
     }
 };
