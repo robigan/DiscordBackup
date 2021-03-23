@@ -1,4 +1,5 @@
 const Prompts = require("prompts");
+const Globby = require("globby");
 const { bold: Bold, green: Green, grey: Grey, red: Red } = require("kleur");
 
 module.exports = class UI {
@@ -18,12 +19,14 @@ module.exports = class UI {
             choices: [
                 { title: "See available servers", description: "Let's you see servers and the possible data to snapshot", value: "ServerInfos" },
                 { title: "Pick a server to snapshot", description: "Starts the snapshotting process", value: "Backup" },
+                { title: "Restore server from snapshot", description: "Restores/Makes a new server from backup", value: "Restore" },
                 { title: "Configure intent options", description: "Configures which intents to snapshot (Options doesn't save!)", value: "Configure" },
                 { title: "Exit program", value: "Exit" }
             ],
             initial: 1
         });
         if (Action.value === "Backup") this.client.Snapshot.createSnapshot(await this.pickGuilds(this.client.guilds));
+        else if (Action.value === "Restore") /*this.client.Restore.createNewServer*/(await this.pickFile(`${process.cwd()}/Snapshots/*.json`));
         else if (Action.value === "ServerInfos") this.getServerInfo(await this.pickGuilds(this.client.guilds));
         else if (Action.value === "Configure") await this.chooseData();
         else if (Action.value === "Exit") process.exit();
@@ -72,7 +75,9 @@ ${Bold("Members")} ${Grey("›")} ${Array.isArray(members) ? members.length : me
                 { title: "Channels", value: "Channels", selected: this.client.Intents.get("Channels") },
                 { title: "Roles", value: "Roles", selected: this.client.Intents.get("Roles") },
                 { title: "Emojis", value: "Emojis", selected: this.client.Intents.get("Emojis") },
-                { title: "Members", value: "Members", selected: this.client.Intents.get("Members") }
+                { title: "Members", value: "Members", selected: this.client.Intents.get("Members") },
+                { title: "Owner", value: "Owner", selected: this.client.Intents.get("Owner") },
+                { title: "Bans", value: "Bans", selected: this.client.Intents.get("Bans") },
             ],
             warn: "This option is either disabled for toggling or not available at the moment"
         });
@@ -81,5 +86,18 @@ ${Bold("Members")} ${Grey("›")} ${Array.isArray(members) ? members.length : me
         }
         Intents.value.forEach(x => this.client.Intents.set(x, true));
         this.mainMenu();
+    }
+
+    async pickFile(Dir) {
+        const Files = await Globby(Dir);
+        const Options = Files.map(File => ({ title: File, value: File }));
+        const File = await Prompts({
+            type: "select",
+            name: "value",
+            message: "Pick snapshot file",
+            choices: Options
+        });
+        this.mainMenu();
+        return File.value;
     }
 };

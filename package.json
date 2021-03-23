@@ -4,6 +4,7 @@
   "description": "A simple tool for backing up discord servers. An alternative to Xenon Bot and serverless.",
   "main": "index.js",
   "dependencies": {
+    "globby": "^11.0.3",
     "prompts": "^2.4.0",
     "snowtransfer": "git+https://github.com/AmandaDiscord/SnowTransfer.git"
   },
